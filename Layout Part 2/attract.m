@@ -1,0 +1,57 @@
+function [target] = attract(dept_number, constraint, departments, solution)
+    target = [];
+    
+    for i = 1:length(constraint)
+        index = [];
+        if solution(dept_number) == constraint(i, 1)
+            for j = 1:length(solution)
+                if solution(j) == constraint(i, 2)
+                    index = j;
+                end
+            end
+        elseif solution(dept_number) == constraint(i, 2)
+            for j = 1:length(solution)
+                if solution(j) == constraint(i, 1)
+                    index = j;
+                end
+            end
+        end
+        if ~isempty(index)
+            if departments(index).X > departments(dept_number).X
+                if ~isempty(target)
+                    if ~ismember("right", target)
+                        target = [target "right"]
+                    end
+                else
+                    target = "right";
+                end
+            else
+                if ~isempty(target)
+                    if ~ismember("left", target)
+                        target = [target "left"]
+                    end
+                else
+                    target = "left";
+                end
+            end
+            if departments(index).Y > departments(dept_number).Y
+                if ~isempty(target)
+                    if ~ismember("down", target)
+                        target = [target "down"]
+                    end
+                else
+                    target = "down";
+                end
+                else
+                if ~isempty(target)
+                    if ~ismember("up", target)
+                        target = [target "up"]
+                    end
+                else
+                    target = "up";
+                end
+            end
+        end
+    end
+    target
+end
