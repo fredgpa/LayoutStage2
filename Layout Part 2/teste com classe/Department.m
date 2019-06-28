@@ -11,8 +11,16 @@ classdef (ClassAttributes) Department
         reqAspect = [];
         fixedPos = [];
         fixedSize = [];
+        directions = [];
     end
     methods (MethodAttributes)
+        function obj = updateDir(obj)
+            if (obj.sizeL + obj.sizeR + 1) < (obj.sizeU + obj.sizeD + 1)
+                directions = ["up" "down" "right" "left"];
+            else
+                directions = ["left" "right" "up" "down"];
+            end
+        end
         function result = calcArea(obj)
             result = (obj.sizeD + obj.sizeU + 1) * (obj.sizeL + obj.sizeR + 1);
         end

@@ -1,5 +1,5 @@
 function [ result ] = main(problem)
-    weight_factor = [ 0, 0, 0, 0];
+    weight_factor = [ 0 0 0 0];
     %%[departments, constraints] = initialize(problem);
 
     results_array = calcObj(departments, contraints, weight_factor);
@@ -14,12 +14,14 @@ function [ result ] = main(problem)
         bool = false;
     end
 
-    if (departments(dept_number).sizeL + departments(dept_number).sizeR + 1) < (departments(dept_number).sizeU + departments(dept_number).sizeD + 1)
-        directions = ["up" "down" "right" "left"];
+    departments(i) = departments(i).updateDir();
+
+    if ~isempty(constraints)
+        mod = attract(dept_number, departments, constraints);
     else
-        directions = ["left" "right" "up" "down"];
+        mod = [0 0];
     end
 
-
+    
 
 end

@@ -38,7 +38,13 @@ classdef Constraint
                 obj.achAlign = false;
             end
         end
-
+        function bool = checkDept(obj, dept)
+            if obj.deptA == dept || obj.deptB = dept
+                bool = true;
+            else
+                bool = false;
+            end
+        end
 
     end
 end
