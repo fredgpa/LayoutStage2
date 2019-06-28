@@ -20,8 +20,6 @@ function [ result ] = main(problem)
         directions = ["left" "right" "up" "down"];
     end
 
-       bora ver iso
-
 
 
 end
