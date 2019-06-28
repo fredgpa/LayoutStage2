@@ -7,13 +7,14 @@ classdef (ClassAttributes) Department
         size_D = 0;
         size_R = 0;
         size_L = 0;
-        size_Total = 1;
+        req_Area = [];
+        req_Aspect = [];
         fixed_Pos = [];
         fixed_Size = [];
     end
     methods (MethodAttributes)
-        function obj = calcArea(obj)
-            obj.size_Total = (obj.size_D + obj.size_U + 1) * (obj.size_L + obj.size_R + 1);
+        function result = calcArea(obj)
+            result = (obj.size_D + obj.size_U + 1) * (obj.size_L + obj.size_R + 1);
         end
         function obj = grow(obj, dir)
             if dir == "up"
@@ -47,6 +48,6 @@ classdef (ClassAttributes) Department
             else
                 obj.centroid_X = obj.centroid_X - 1;
             end
-        end
+        end        
     end
 end
