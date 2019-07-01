@@ -21,6 +21,13 @@ classdef (ClassAttributes) Department
                 directions = ["left" "right" "up" "down"];
             end
         end
+        function result = calcAspect(obj)
+            if (obj.sizeL + obj.sizeR) > (obj.sizeU + obj.sizeD)
+                result = (obj.sizeL + obj.sizeR + 1)/(obj.sizeU + obj.sizeD + 1);
+            else
+                result = (obj.sizeU + obj.sizeD + 1)/(obj.sizeL + obj.sizeR + 1);
+            end
+        end
         function result = calcArea(obj)
             result = (obj.sizeD + obj.sizeU + 1) * (obj.sizeL + obj.sizeR + 1);
         end

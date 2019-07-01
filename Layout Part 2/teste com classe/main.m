@@ -16,12 +16,21 @@ function [ result ] = main(problem)
 
     departments(i) = departments(i).updateDir();
 
-    if ~isempty(constraints)
+    if ~isempty(constraints) && bool
         mod = attract(dept_number, departments, constraints);
     else
         mod = [0 0];
     end
 
+    prob = dirProb(departments, dept_number, mod, bool);
+
+    if departments(dept_number).calcArea == 1
+        dir = "right";
+    else
+        dir = departments(dept_number).directions(roleta(prob));
+    end
+
+    
     
 
 end
