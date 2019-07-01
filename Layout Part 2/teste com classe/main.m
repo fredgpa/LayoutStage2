@@ -2,9 +2,13 @@ function [ result ] = main(problem)
     weight_factor = [ 0 0 0 0];
     %%[departments, constraints] = initialize(problem);
 
-    results_array = calcObj(departments, contraints, weight_factor);
+    resultsArray = calcObj(departments, contraints, weight_factor);
+    it = 1;
     
     %while
+
+    backup = [departments constraints];
+
     prob = deptProb(departments);
     dept_number = rolette(prob);
 
@@ -30,7 +34,20 @@ function [ result ] = main(problem)
         dir = departments(dept_number).directions(roleta(prob));
     end
 
-    
+    if bool
+        departments(dept_number) = departments(dept_number).grow(dir);
+    else
+        departments(dept_number) = departments(dept_number).shrink(dir);
+    end
+
+    resultTemp = calcObj(departments, contraints, weight_factor);
+    if resultTemp < resultsArray(length(resultsArray))
+        resultsArray = [resultsArray resultTemp];
+        it = it + 1;
+    else
+        departments = backup(1);
+        constraints = backup(2);
+    end
     
 
 end
