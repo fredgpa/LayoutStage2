@@ -35,6 +35,7 @@ function [ result ] = main(problem)
         end
 
         if bool
+            departments = adjustPos(departments, dept_number, dir);
             departments(dept_number) = departments(dept_number).grow(dir);
         else
             departments(dept_number) = departments(dept_number).shrink(dir);
