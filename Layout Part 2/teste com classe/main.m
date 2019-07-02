@@ -1,5 +1,5 @@
-function [ result ] = main(problem)
-    weight_factor = [ 0 0 0 0];
+function [ result ] = main(departments, constraints)
+    weight_factor = [ 0.00000001 10 10 20 400];
     %%[departments, constraints] = initialize(problem);
 
     resultsArray = calcObj(departments, contraints, weight_factor);
@@ -37,8 +37,10 @@ function [ result ] = main(problem)
         if bool
             departments = adjustPos(departments, dept_number, dir);
             departments(dept_number) = departments(dept_number).grow(dir);
+            departments(dept_number) = departments(dept_number).center();
         else
             departments(dept_number) = departments(dept_number).shrink(dir);
+            departments(dept_number) = departments(dept_number).center();
         end
 
         resultTemp = calcObj(departments, contraints, weight_factor);

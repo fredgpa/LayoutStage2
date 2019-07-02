@@ -63,6 +63,19 @@ classdef (ClassAttributes) Department
             else
                 obj.centroidX = obj.centroidX - 1;
             end
-        end        
+        end
+        function obj = center(obj)            
+            obj.centroidX = floor((obj.centroidX - obj.sizeL) + (obj.centroidX + obj.sizeR)/2);
+            obj.centroidY = floor((obj.centroidY - obj.sizeU) + (obj.centroidY + obj.sizeD)/2);
+
+            wid = obj.sizeL + obj.sizeR;
+            hei = obj.sizeU + obj.sizeD;
+
+            obj.sizeL = floor(wid/2);
+            obj.sizeR = ceil(wid/2);
+
+            obj.sizeU = floor(hei/2);
+            obj.sizeD = ceil(hei/2);
+        end  
     end
 end
