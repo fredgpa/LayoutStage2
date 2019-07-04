@@ -1,4 +1,4 @@
-function [result] = rolette(solution)
+function [result] = roulette(solution)
 %para testes
   % if ( (sum(solution) > 100) || (sum(solution)<100) )
   %     disp('O total da soma das entradas deve ser 100')

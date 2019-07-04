@@ -10,7 +10,11 @@ function [ result ] = main(departments, constraints)
         backup = [departments constraints];
 
         prob = deptProb(departments);
-        dept_number = rolette(prob);
+
+        dept_number = roulette(prob);
+        while departments(dept_number).fixedSize == true || departments(dept_number).fixedPos == true
+            dept_number = roulette(prob);
+        end
 
         if departments(i).reqArea - departments(i).calcArea() > 0
             bool = true;
