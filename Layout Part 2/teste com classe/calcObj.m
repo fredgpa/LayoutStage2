@@ -1,4 +1,4 @@
-function value = calcObj(departments, constraints, weight_factor)
+function value = calcObj(departments, constraints, weight_factor, materials, costs)
 
     for i = 1:length(constraints)
         deptA = findDepartment(departments, constraints(i).deptA);
@@ -15,7 +15,7 @@ function value = calcObj(departments, constraints, weight_factor)
         dist(i, j) = abs((departments(i).centroidX - departments(j).centroidX)) + abs((departments(i).centroidY - departments(j).centroidY));
         value1 = value1 + (materials(departments(i).n, departments(j).n) * costs(departments(i).n, departments(j).n) * dist(i, j));
       end
-      value2 = value2 + ( (abs(departments(i).reqArea - departments(i).calcArea) / departments(i).reqArea);
+      value2 = value2 + (abs(departments(i).reqArea - departments(i).calcArea) / departments(i).reqArea);
       value3 = value3 + (abs(departments(i).reqAspect - departments(i).calcAspect()));
     end
     

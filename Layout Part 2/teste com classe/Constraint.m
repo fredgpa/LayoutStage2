@@ -8,27 +8,27 @@ classdef Constraint
     end
     methods
         function obj = constraintCheck(obj, deptA, deptB)
-            distX_Y = sqrt((deptA.centroid_X - deptB.centroid_X)^2 + (deptA.centroid_Y - deptB.centroid_Y)^2);
-            diagonalA = sqrt((deptA.size_R + 0.5)^2 + (deptA.size_D + 0.5)^2);
-            diagonalB = sqrt((deptB.size_R + 0.5)^2 + (deptB.size_D + 0.5)^2);
+            distX_Y = sqrt((deptA.centroidX - deptB.centroidX)^2 + (deptA.centroidY - deptB.centroidY)^2);
+            diagonalA = sqrt((deptA.sizeR + 0.5)^2 + (deptA.sizeD + 0.5)^2);
+            diagonalB = sqrt((deptB.sizeR + 0.5)^2 + (deptB.sizeD + 0.5)^2);
             
-            if deptA.size_R >= deptA.size_D
-                biggest_side_A = deptA.size_R;
+            if deptA.sizeR >= deptA.sizeD
+                biggest_side_A = deptA.sizeR;
             else
-                biggest_side_A = deptA.size_D;
+                biggest_side_A = deptA.sizeD;
             end
             
-            if deptB.size_R >= deptB.size_D
-                biggest_side_B = deptB.size_R;
+            if deptB.sizeR >= deptB.sizeD
+                biggest_side_B = deptB.sizeR;
             else
-                biggest_side_B = deptB.size_D;
+                biggest_side_B = deptB.sizeD;
             end
 
             if distX_Y <= (diagonalA + diagonalB)
                 obj.achAdj = true;
-                if (distX_Y == ((deptA.size_R + deptA.size_L)/2) + ((deptB.size_R + deptB.size_L)/2) + 1) && (deptA.size_U + deptA.size_D == deptB.size_U + deptB.size_D)
+                if (distX_Y == ((deptA.sizeR + deptA.sizeL)/2) + ((deptB.sizeR + deptB.sizeL)/2) + 1) && (deptA.sizeU + deptA.sizeD == deptB.sizeU + deptB.sizeD)
                     obj.achAlign = true;
-                elseif (distX_Y == ((deptA.size_D + deptA.size_U)/2) + ((deptB.size_D + deptB.size_U)/2) + 1) && (deptA.size_L + deptA.size_R == deptB.size_L + deptB.size_R)
+                elseif (distX_Y == ((deptA.sizeD + deptA.sizeU)/2) + ((deptB.sizeD + deptB.sizeU)/2) + 1) && (deptA.sizeL + deptA.sizeR == deptB.sizeL + deptB.sizeR)
                     obj.achAlign = true;
                 else
                     obj.achAlign = false;
@@ -39,7 +39,7 @@ classdef Constraint
             end
         end
         function bool = checkDept(obj, dept)
-            if obj.deptA == dept || obj.deptB = dept
+            if obj.deptA == dept || obj.deptB == dept
                 bool = true;
             else
                 bool = false;

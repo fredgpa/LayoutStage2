@@ -11,13 +11,13 @@ function [ mod ] = attract(dept, departments, constraints)
                 dept2 = findDepartment(departments, constraints(i).deptA);
             end
 
-            if departments(dept1).centroidX > departments(dept2).centroidX
+            if departments(dept1).centroidX > departments(dept2).centroidX              
                 if departments(dept1).directions(1) == "up"
                     mod(2) = -1;
                 else
                     mod(1) = 1;
                 end
-            elseif departments(dept1).centroidX < departments(dept2).centroidX                
+            elseif departments(dept1).centroidX < departments(dept2).centroidX        
                 if departments(dept1).directions(1) == "up"
                     mod(2) = 1;
                 else

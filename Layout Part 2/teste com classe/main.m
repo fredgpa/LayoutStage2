@@ -1,13 +1,16 @@
-function [ result ] = main(departments, constraints)
+function [ result ] = main(departments, constraints, materials, costs)
     weight_factor = [ 0.00000001 10 10 20 400];
     %%[departments, constraints] = initialize(problem);
 
-    resultsArray = calcObj(departments, contraints, weight_factor);
+    resultsArray = calcObj(departments, constraints, weight_factor, materials, costs);
+    dirArray = [];
+    deptArray = [];
     it = 1;
     finish = false;
     while(~finish)
 
-        backup = [departments constraints];
+        backup.departments = departments;
+        backup.constraints = constraints;
 
         prob = deptProb(departments);
 
@@ -16,13 +19,13 @@ function [ result ] = main(departments, constraints)
             dept_number = roulette(prob);
         end
 
-        if departments(i).reqArea - departments(i).calcArea() > 0
+        if departments(dept_number).reqArea - departments(dept_number).calcArea() > 0
             bool = true;
         else %% depois testar se isso atrapalha, pois == 0 entra no else
             bool = false;
         end
 
-        departments(i) = departments(i).updateDir();
+        departments(dept_number) = departments(dept_number).updateDir();
 
         if ~isempty(constraints) && bool
             mod = attract(dept_number, departments, constraints);
@@ -35,34 +38,41 @@ function [ result ] = main(departments, constraints)
         if departments(dept_number).calcArea == 1
             dir = "right";
         else
-            dir = departments(dept_number).directions(roleta(prob));
+            dir = departments(dept_number).directions(roulette(prob));
         end
+        
+        deptArray = [deptArray departments(dept_number).n];
+        dirArray = [dirArray dir];
 
         if bool
             departments = adjustPos(departments, dept_number, dir);
-            departments(dept_number) = departments(dept_number).grow(dir);
-            departments(dept_number) = departments(dept_number).center();
+            if checkSpace(departments, dept_number, dir)
+                departments(dept_number) = departments(dept_number).grow(dir);
+                departments(dept_number) = departments(dept_number).center();
+            end
         else
-            departments(dept_number) = departments(dept_number).shrink(dir);
-            departments(dept_number) = departments(dept_number).center();
+            if checkSpace(departments, dept_number, dir)
+                departments(dept_number) = departments(dept_number).shrink(dir);
+                departments(dept_number) = departments(dept_number).center();
+            end
         end
 
-        resultTemp = calcObj(departments, contraints, weight_factor);
+        resultTemp = calcObj(departments, constraints, weight_factor, materials, costs)
         if resultTemp < resultsArray(length(resultsArray))
             resultsArray = [resultsArray resultTemp];
             it = it + 1;
         else
-            departments = backup(1);
-            constraints = backup(2);
+            departments = backup.departments;
+            constraints = backup.constraints;
 
             finish = true;
-            for i=1:length(constraint)
-                if (constraint(i).reqAlign && ~(constraint(i).achAlign)) || ~(constraint(i).achAdj)
+            for i=1:length(constraints)
+                if (constraints(i).reqAlign && ~(constraints(i).achAlign)) || ~(constraints(i).achAdj)
                     finish = false;
                 end
             end
         end
     
     end
-
+    result = [ resultsArray deptArray dirArray ];
 end

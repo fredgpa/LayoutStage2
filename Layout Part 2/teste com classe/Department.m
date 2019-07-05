@@ -1,5 +1,5 @@
-classdef (ClassAttributes) Department
-    properties (PropertyAttributes)
+classdef Department
+    properties
         n = [];
         centroidX = [];
         centroidY = [];
@@ -13,12 +13,12 @@ classdef (ClassAttributes) Department
         fixedSize = [];
         directions = [];
     end
-    methods (MethodAttributes)
+    methods
         function obj = updateDir(obj)
             if (obj.sizeL + obj.sizeR + 1) < (obj.sizeU + obj.sizeD + 1)
-                directions = ["up" "down" "right" "left"];
+                obj.directions = ["up" "down" "right" "left"];
             else
-                directions = ["left" "right" "up" "down"];
+                obj.directions = ["left" "right" "up" "down"];
             end
         end
         function result = calcAspect(obj)
