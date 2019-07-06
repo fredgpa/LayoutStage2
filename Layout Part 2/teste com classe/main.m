@@ -51,10 +51,8 @@ function [ result ] = main(departments, constraints, materials, costs)
                 departments(dept_number) = departments(dept_number).center();
             end
         else
-            if checkSpace(departments, dept_number, dir)
                 departments(dept_number) = departments(dept_number).shrink(dir);
                 departments(dept_number) = departments(dept_number).center();
-            end
         end
 
         resultTemp = calcObj(departments, constraints, weight_factor, materials, costs)
