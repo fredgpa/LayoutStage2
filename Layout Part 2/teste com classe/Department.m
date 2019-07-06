@@ -65,8 +65,8 @@ classdef Department
             end
         end
         function obj = center(obj)            
-            obj.centroidX = floor((obj.centroidX - obj.sizeL) + (obj.centroidX + obj.sizeR)/2);
-            obj.centroidY = floor((obj.centroidY - obj.sizeU) + (obj.centroidY + obj.sizeD)/2);
+            obj.centroidX = floor(((obj.centroidX - obj.sizeL) + (obj.centroidX + obj.sizeR))/2);
+            obj.centroidY = floor(((obj.centroidY - obj.sizeU) + (obj.centroidY + obj.sizeD))/2);
 
             wid = obj.sizeL + obj.sizeR;
             hei = obj.sizeU + obj.sizeD;
