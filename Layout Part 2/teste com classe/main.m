@@ -15,7 +15,7 @@ function [ result ] = main(departments, constraints, materials, costs)
         prob = deptProb(departments);
 
         dept_number = roulette(prob);
-        while departments(dept_number).fixedSize == true || departments(dept_number).fixedPos == true
+        while departments(dept_number).fixedSize == true
             dept_number = roulette(prob);
         end
 
