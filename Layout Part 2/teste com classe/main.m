@@ -3,6 +3,7 @@ function [ result ] = main(departments, constraints, materials, costs)
     %%[departments, constraints] = initialize(problem);
 
     resultsArray = calcObj(departments, constraints, weight_factor, materials, costs);
+    constraintsArray = [];
     dirArray = [];
     deptArray = [];
     it = 1;
@@ -55,24 +56,28 @@ function [ result ] = main(departments, constraints, materials, costs)
                 departments(dept_number) = departments(dept_number).center();
         end
 
-        resultTemp = calcObj(departments, constraints, weight_factor, materials, costs)
-        %if resultTemp < resultsArray(length(resultsArray))
-            resultsArray = [resultsArray resultTemp];
+        [ resultTemp constraintValue ] = calcObj(departments, constraints, weight_factor, materials, costs)
+        if resultTemp < resultsArray(length(resultsArray))
+            resultsArray = [ resultsArray resultTemp ];
+            constraintsArray = [ constraintsArray constraintValue ];
             it = it + 1;
-        %{
         else
-            departments = backup.departments;
-            constraints = backup.constraints;
+            if constraintValue <= constraintsArray(length(constraintsArray))
+                resultsArray = [ resultsArray resultTemp ];
+                constraintsArray = [ constraintsArray constraintValue ];
+                it = it + 1;
+            else
+                departments = backup.departments;
+                constraints = backup.constraints;
 
-            finish = true;
-            for i=1:length(constraints)
-                if (constraints(i).reqAlign && ~(constraints(i).achAlign)) || ~(constraints(i).achAdj)
-                    finish = false;
+                finish = true;
+                for i=1:length(constraints)
+                    if (constraints(i).reqAlign && ~(constraints(i).achAlign)) || ~(constraints(i).achAdj)
+                        finish = false;
+                    end
                 end
             end
-        
         end
-        %}
 
     end
     result = [ resultsArray deptArray dirArray ];
