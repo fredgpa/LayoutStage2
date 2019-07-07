@@ -34,12 +34,13 @@ function [ result ] = main(departments, constraints, materials, costs)
             mod = [0 0];
         end
 
-        prob = dirProb(departments, dept_number, mod, bool);
+        prob = dirProb(departments, dept_number, mod, bool)
 
         if departments(dept_number).calcArea == 1
             dir = "right";
-        else
-            dir = departments(dept_number).directions(roulette(prob));
+        else            
+            dir = roulette(prob);
+            dir = departments(dept_number).directions(dir);
         end
         
         deptArray = [deptArray departments(dept_number).n];
@@ -56,7 +57,8 @@ function [ result ] = main(departments, constraints, materials, costs)
                 departments(dept_number) = departments(dept_number).center();
         end
 
-        [ resultTemp constraintValue ] = calcObj(departments, constraints, weight_factor, materials, costs)
+        [ resultTemp constraintValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
+        %resultTemp
         if resultTemp < resultsArray(length(resultsArray))
             resultsArray = [ resultsArray resultTemp ];
             constraintsArray = [ constraintsArray constraintValue ];
