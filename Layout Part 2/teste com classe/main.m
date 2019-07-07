@@ -56,9 +56,10 @@ function [ result ] = main(departments, constraints, materials, costs)
         end
 
         resultTemp = calcObj(departments, constraints, weight_factor, materials, costs)
-        if resultTemp < resultsArray(length(resultsArray))
+        %if resultTemp < resultsArray(length(resultsArray))
             resultsArray = [resultsArray resultTemp];
             it = it + 1;
+        %{
         else
             departments = backup.departments;
             constraints = backup.constraints;
@@ -69,6 +70,7 @@ function [ result ] = main(departments, constraints, materials, costs)
                     finish = false;
                 end
             end
+        %}
         end
     
     end
