@@ -70,9 +70,10 @@ function [ result ] = main(departments, constraints, materials, costs)
                     finish = false;
                 end
             end
-        %}
+        
         end
-    
+        %}
+
     end
     result = [ resultsArray deptArray dirArray ];
 end
