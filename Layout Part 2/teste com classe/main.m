@@ -2,7 +2,7 @@ function [ result ] = main(departments, constraints, materials, costs)
     weight_factor = [ 0.00000001 10 10 20 400];
     %%[departments, constraints] = initialize(problem);
 
-    [ resultsArray, constraintsArray ]= calcObj(departments, constraints, weight_factor, materials, costs);
+    [ resultsArray, constraintsArray, areasArray ]= calcObj(departments, constraints, weight_factor, materials, costs);
     dirArray = [];
     deptArray = [];
     it = 1;
@@ -56,15 +56,17 @@ function [ result ] = main(departments, constraints, materials, costs)
                 departments(dept_number) = departments(dept_number).center();
         end
 
-        [ resultTemp, constraintValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
+        [ resultTemp, constraintValue, areaValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
         if resultTemp < resultsArray(length(resultsArray))
             resultsArray = [ resultsArray resultTemp ];
             constraintsArray = [ constraintsArray constraintValue ];
+            areasArray = [ areasArray areaValue ];
             it = it + 1;
         else
-            if constraintValue <= constraintsArray(length(constraintsArray))
+            if (constraintValue < constraintsArray(length(constraintsArray))) || (areaValue < areasArray(length(areasArray)))
                 resultsArray = [ resultsArray resultTemp ];
                 constraintsArray = [ constraintsArray constraintValue ];
+                areasArray = [ areasArray areaValue ];
                 it = it + 1;
             else
                 departments = backup.departments;
