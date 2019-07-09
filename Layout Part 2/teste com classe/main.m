@@ -2,14 +2,13 @@ function [ result ] = main(departments, constraints, materials, costs)
     weight_factor = [ 0.00000001 10 10 20 400];
     %%[departments, constraints] = initialize(problem);
 
-    resultsArray = calcObj(departments, constraints, weight_factor, materials, costs);
-    constraintsArray = [];
+    [ resultsArray, constraintsArray ]= calcObj(departments, constraints, weight_factor, materials, costs);
     dirArray = [];
     deptArray = [];
     it = 1;
     finish = false;
     while(~finish)
-
+        resultsArray(length(resultsArray))
         backup.departments = departments;
         backup.constraints = constraints;
 
@@ -34,7 +33,7 @@ function [ result ] = main(departments, constraints, materials, costs)
             mod = [0 0];
         end
 
-        prob = dirProb(departments, dept_number, mod, bool)
+        prob = dirProb(departments, dept_number, mod, bool);
 
         if departments(dept_number).calcArea == 1
             dir = "right";
@@ -57,8 +56,7 @@ function [ result ] = main(departments, constraints, materials, costs)
                 departments(dept_number) = departments(dept_number).center();
         end
 
-        [ resultTemp constraintValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
-        %resultTemp
+        [ resultTemp, constraintValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
         if resultTemp < resultsArray(length(resultsArray))
             resultsArray = [ resultsArray resultTemp ];
             constraintsArray = [ constraintsArray constraintValue ];
