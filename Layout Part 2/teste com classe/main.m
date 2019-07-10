@@ -29,7 +29,7 @@ function [ result ] = main(departments, constraints, materials, costs)
         departments(dept_number) = departments(dept_number).updateDir();
     
         
-        if ~isempty(constraints) && bool
+        if ~isempty(constraints) && bool            
             mod = attract(dept_number, departments, constraints);
         end
 

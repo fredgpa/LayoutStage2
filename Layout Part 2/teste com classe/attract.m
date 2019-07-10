@@ -4,7 +4,7 @@ function [ mod ] = attract(dept_number, departments, constraints)
     attracted_dept = [];
     dept1 = dept_number;
     for i=1:length(constraints)
-        if constraints(i).checkDept(departments(dept_number).n)
+        if constraints(i).checkDept(departments(dept_number).n) && (~constraints(i).achAdj || (constraints(i).reqAlign && ~constraints(i).achAlign))
             if constraints(i).deptA == departments(dept_number).n
                 dept2 = findDepartment(departments, constraints(i).deptB);
             else
