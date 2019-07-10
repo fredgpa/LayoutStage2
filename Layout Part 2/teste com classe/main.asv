@@ -30,9 +30,9 @@ function [ result ] = main(departments, constraints, materials, costs)
     
         
         if ~isempty(constraints) && bool            
-            [ departments, mod ] = attract(dept_number, departments, constraints);
+            mod = attract(dept_number, departments, constraints);
         end
-        
+
         prob = dirProb(departments, dept_number, mod, bool);
 
         if departments(dept_number).calcArea == 1
@@ -94,7 +94,7 @@ function [ result ] = main(departments, constraints, materials, costs)
             it = it + 1;
         
         else
-            if rand() < (0.1) %&& resultsArray(length(resultsArray)) > 1000
+            if rand() < (0.1 - it/100)
                 resultsArray = [ resultsArray resultTemp ];
                 constraintsArray = [ constraintsArray constraintValue ];
                 areasArray = [ areasArray areaValue ];
