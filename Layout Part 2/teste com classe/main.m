@@ -48,12 +48,41 @@ function [ result ] = main(departments, constraints, materials, costs)
         if bool
             departments = adjustPos(departments, dept_number, dir);
             if checkSpace(departments, dept_number, dir)
+                for i=1:length(constraints)
+                    if constraints(i).checkDept(departments(dept_number).n) && constraints(i).reqAlign && constraints(i).achAlign
+                        if constraints(i).deptA == departments(dept_number).n                            
+                            deptPos = findDepartment(departments, deptB);
+                        else
+                            deptPos = findDepartment(departments, deptA);
+                        end
+                        if ((dir == "left" || dir == "right") && (departments(dept_number).centroidX == departments(deptPos).centroidX)) || ((dir == "up" || dir == "down") && (departments(dept_number).centroidY == departments(deptPos).centroidY))
+                            departments = adjustPos(departments, deptPos, dir);
+                            if checkSpace(departments, deptPos, dir)
+                                departments(deptPos) = departments(deptPos).grow(dir);
+                                departments(deptPos) = departments(deptPos).center();
+                            end
+                        end
+                    end
+                end
                 departments(dept_number) = departments(dept_number).grow(dir);
-                %departments(dept_number) = departments(dept_number).center();
+                departments(dept_number) = departments(dept_number).center();
             end
         else
-                departments(dept_number) = departments(dept_number).shrink(dir);
-                %departments(dept_number) = departments(dept_number).center();
+            for i=1:length(constraints)
+                if constraints(i).checkDept(departments(dept_number).n) && constraints(i).reqAlign && constraints(i).achAlign
+                    if constraints(i).deptA == departments(dept_number).n                            
+                        deptPos = findDepartment(departments, deptB);
+                    else
+                        deptPos = findDepartment(departments, deptA);
+                    end
+                    if ((dir == "left" || dir == "right") && (departments(dept_number).centroidX == departments(deptPos).centroidX)) || ((dir == "up" || dir == "down") && (departments(dept_number).centroidY == departments(deptPos).centroidY))
+                            departments(deptPos) = departments(deptPos).shrink(dir);
+                            departments(deptPos) = departments(deptPos).center();
+                    end
+                end
+            end
+            departments(dept_number) = departments(dept_number).shrink(dir);
+            departments(dept_number) = departments(dept_number).center();
         end
 
         [ resultTemp, constraintValue, areaValue, aspectValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
