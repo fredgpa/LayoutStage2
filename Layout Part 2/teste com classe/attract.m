@@ -27,15 +27,15 @@ function [ mod ] = attract(dept_number, departments, constraints)
 
             if departments(dept1).centroidY > departments(dept2).centroidY
                 if departments(dept1).directions(1) == "up"
-                    mod(2) = mod(2) + 1;
-                else
                     mod(1) = mod(1) + 1;
+                else
+                    mod(2) = mod(2) + 1;
                 end
             elseif departments(dept1).centroidY < departments(dept2).centroidY
                 if departments(dept1).directions(1) == "up"
-                    mod(2) = mod(2) - 1;
-                else
                     mod(1) = mod(1) - 1;
+                else
+                    mod(2) = mod(2) - 1;
                 end                
             end
         end

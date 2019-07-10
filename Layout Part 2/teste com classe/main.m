@@ -2,12 +2,13 @@ function [ result ] = main(departments, constraints, materials, costs)
     weight_factor = [ 0.00000001 10 10 20 400];
     %%[departments, constraints] = initialize(problem);
 
-    [ resultsArray, constraintsArray, areasArray ]= calcObj(departments, constraints, weight_factor, materials, costs);
+    [ resultsArray, constraintsArray, areasArray, aspectsArray ]= calcObj(departments, constraints, weight_factor, materials, costs);
     dirArray = [];
     deptArray = [];
     it = 1;
     finish = false;
     while(~finish)
+        mod = [0 0];
         resultsArray(length(resultsArray))
         backup.departments = departments;
         backup.constraints = constraints;
@@ -26,12 +27,12 @@ function [ result ] = main(departments, constraints, materials, costs)
         end
 
         departments(dept_number) = departments(dept_number).updateDir();
-
+    
+        %{
         if ~isempty(constraints) && bool
             mod = attract(dept_number, departments, constraints);
-        else
-            mod = [0 0];
         end
+        %}
 
         prob = dirProb(departments, dept_number, mod, bool);
 
@@ -49,26 +50,31 @@ function [ result ] = main(departments, constraints, materials, costs)
             departments = adjustPos(departments, dept_number, dir);
             if checkSpace(departments, dept_number, dir)
                 departments(dept_number) = departments(dept_number).grow(dir);
-                departments(dept_number) = departments(dept_number).center();
+                %departments(dept_number) = departments(dept_number).center();
             end
         else
                 departments(dept_number) = departments(dept_number).shrink(dir);
-                departments(dept_number) = departments(dept_number).center();
+                %departments(dept_number) = departments(dept_number).center();
         end
 
-        [ resultTemp, constraintValue, areaValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
-        if resultTemp < resultsArray(length(resultsArray))
+        [ resultTemp, constraintValue, areaValue, aspectValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
+        if resultTemp <= resultsArray(length(resultsArray))
             resultsArray = [ resultsArray resultTemp ];
             constraintsArray = [ constraintsArray constraintValue ];
             areasArray = [ areasArray areaValue ];
+            aspectsArray = [ aspectsArray aspectValue ];
             it = it + 1;
+        
         else
-            if (constraintValue < constraintsArray(length(constraintsArray))) || (areaValue < areasArray(length(areasArray)))
+            
+            if (aspectValue < aspectsArray(length(aspectsArray))) || (areaValue < areasArray(length(areasArray))) || (constraintValue < constraintsArray(length(constraintsArray)))
                 resultsArray = [ resultsArray resultTemp ];
                 constraintsArray = [ constraintsArray constraintValue ];
                 areasArray = [ areasArray areaValue ];
+                aspectsArray = [ aspectsArray aspectValue ];
                 it = it + 1;
             else
+            
                 departments = backup.departments;
                 constraints = backup.constraints;
 
@@ -80,6 +86,7 @@ function [ result ] = main(departments, constraints, materials, costs)
                 end
             end
         end
+        
 
     end
     result = [ resultsArray deptArray dirArray ];
