@@ -1,170 +1,136 @@
-function [ result ] = main(departments, constraints, materials, costs)
-    weight_factor = [ 0.00000001 10 10 20 400];
-    %%[departments, constraints] = initialize(problem);
-
-    [ resultsArray, constraintsArray, areasArray, aspectsArray ]= calcObj(departments, constraints, weight_factor, materials, costs);
-    dirArray = [];
-    deptArray = [];
-    it = 1;
-    finish = false;
-    while(~finish)
-        option = [];
-        mod = [0 0];
-        resultsArray(length(resultsArray))
-        backup.departments = departments;
-        backup.constraints = constraints;
-
-        prob = deptProb(departments);
-
-        dept_number = roulette(prob);
-        while departments(dept_number).fixedSize == true
-            dept_number = roulette(prob);
-        end
-
-        if departments(dept_number).reqArea - departments(dept_number).calcArea() > 0
-            bool = true;
-        else %% depois testar se isso atrapalha, pois == 0 entra no else
-            bool = false;
-        end
-
-        departments(dept_number) = departments(dept_number).updateDir();
-    
-        
-        if ~isempty(constraints) && bool            
-            [ departments, mod ] = attract(dept_number, departments, constraints);
-        end
-        
-        for i = 1:length(constraints)
-            if constraints(i).checkDept(departments(dept_number).n)
-                if constraints(i).reqAlign && constraints(i).achAdj && ~constraints(i).achAlign
-                    option = i;
-                    break;
-                end
-            end
-        end
-
-
-        if isempty(option)
-            prob = dirProb(departments, dept_number, mod, bool);
-
-            if departments(dept_number).calcArea == 1
-                dir = "right";
-            else            
-                dir = roulette(prob);
-                dir = departments(dept_number).directions(dir);
-            end
-        else
-            if constraints(option).deptA == departments(dept_number).n
-                deptPos = findDepartment(departments, constraint(option).deptB);
-            else
-                deptPos = findDepartment(departments, constraint(option).deptA);
-            end
-
-            if departments(dept_number).dirRelation(departments(deptPos)) == "right" || departments(dept_number).dirRelation(departments(deptPos)) == "left"
-                if (departments(dept_number).centroidY - departments(dept_number).sizeU) < (departments(deptPos).centroidY - departments(deptPos).sizeU)
-                    dir = "up";
-                    bool = false;
-                elseif (departments(dept_number).centroidY - departments(dept_number).sizeU) > (departments(deptPos).centroidY - departments(deptPos).sizeU)
-                    dir = "up";
-                    bool = true;
-                elseif (departments(dept_number).centroidY + departments(dept_number).sizeD) < (departments(deptPos).centroidY - departments(deptPos).sizeD)
-                    dir = "down";
-                    bool = true;
-                else
-                    dir = "up";
-                    bool = false;
-                end
-            else
-                if (departments(dept_number).centroidX - departments(dept_number).sizeL) < (departments(deptPos).centroidX - departments(deptPos).sizeL)
-                    dir = "left";
-                    bool = false;
-                elseif (departments(dept_number).centroidX - departments(dept_number).sizeL) > (departments(deptPos).centroidX - departments(deptPos).sizeL)
-                    dir = "left";
-                    bool = true;
-                elseif (departments(dept_number).centroidX + departments(dept_number).sizeR) < (departments(deptPos).centroidX - departments(deptPos).sizeR)
-                    dir = "right";
-                    bool = true;
-                else
-                    dir = "right";
-                    bool = false;
-                end
-            end
-        end
-            
-        deptArray = [deptArray departments(dept_number).n];
-        dirArray = [dirArray dir];
-
-        if bool
-            departments = adjustPos(departments, dept_number, dir);
-            if checkSpace(departments, dept_number, dir)
-                for i=1:length(constraints)
-                    if constraints(i).checkDept(departments(dept_number).n) && constraints(i).reqAlign && constraints(i).achAlign
-                        if constraints(i).deptA == departments(dept_number).n                            
-                            deptPos = findDepartment(departments, deptB);
-                        else
-                            deptPos = findDepartment(departments, deptA);
-                        end
-                        if ((dir == "left" || dir == "right") && (departments(dept_number).centroidX == departments(deptPos).centroidX)) || ((dir == "up" || dir == "down") && (departments(dept_number).centroidY == departments(deptPos).centroidY))
-                            departments = adjustPos(departments, deptPos, dir);
-                            if checkSpace(departments, deptPos, dir)
-                                departments(deptPos) = departments(deptPos).grow(dir);
-                                departments(deptPos) = departments(deptPos).center();
-                            end
-                        end
-                    end
-                end
-                departments(dept_number) = departments(dept_number).grow(dir);
-                departments(dept_number) = departments(dept_number).center();
-            end
-        else
-            for i=1:length(constraints)
-                if constraints(i).checkDept(departments(dept_number).n) && constraints(i).reqAlign && constraints(i).achAlign
-                    if constraints(i).deptA == departments(dept_number).n                            
-                        deptPos = findDepartment(departments, deptB);
-                    else
-                        deptPos = findDepartment(departments, deptA);
-                    end
-                    if ((dir == "left" || dir == "right") && (departments(dept_number).centroidX == departments(deptPos).centroidX)) || ((dir == "up" || dir == "down") && (departments(dept_number).centroidY == departments(deptPos).centroidY))
-                            departments(deptPos) = departments(deptPos).shrink(dir);
-                            departments(deptPos) = departments(deptPos).center();
-                    end
-                end
-            end
-            departments(dept_number) = departments(dept_number).shrink(dir);
-            departments(dept_number) = departments(dept_number).center();
-        end
-
-
-        [ resultTemp, constraintValue, areaValue, aspectValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
-        if resultTemp <= resultsArray(length(resultsArray))
-            resultsArray = [ resultsArray resultTemp ];
-            constraintsArray = [ constraintsArray constraintValue ];
-            areasArray = [ areasArray areaValue ];
-            aspectsArray = [ aspectsArray aspectValue ];
-            it = it + 1;
-        
-        else
-            if rand() < (0.1) %&& resultsArray(length(resultsArray)) > 1000
-                resultsArray = [ resultsArray resultTemp ];
-                constraintsArray = [ constraintsArray constraintValue ];
-                areasArray = [ areasArray areaValue ];
-                aspectsArray = [ aspectsArray aspectValue ];
-                it = it + 1;
-            else
-            
-                departments = backup.departments;
-                constraints = backup.constraints;
-
-                finish = true;
-                for i=1:length(constraints)
-                    if (constraints(i).reqAlign && ~(constraints(i).achAlign)) || ~(constraints(i).achAdj)
-                        finish = false;
-                    end
-                end
-            end
-        end
-        
-
+classdef Department
+    properties
+        n = [];
+        centroidX = [];
+        centroidY = [];
+        sizeU = 0;
+        sizeD = 0;
+        sizeR = 0;
+        sizeL = 0;
+        reqArea = [];
+        reqAspect = [];
+        fixedPos = [];
+        fixedSize = [];
+        directions = [];
     end
-    result = [ resultsArray deptArray dirArray ];
+    methods
+        function obj = updateDir(obj)
+            if (obj.sizeL + obj.sizeR + 1) < (obj.sizeU + obj.sizeD + 1)
+                obj.directions = ["up" "down" "right" "left"];
+            else
+                obj.directions = ["left" "right" "up" "down"];
+            end
+        end
+        function result = calcAspect(obj)
+            if (obj.sizeL + obj.sizeR) > (obj.sizeU + obj.sizeD)
+                result = (obj.sizeL + obj.sizeR + 1)/(obj.sizeU + obj.sizeD + 1);
+            else
+                result = (obj.sizeU + obj.sizeD + 1)/(obj.sizeL + obj.sizeR + 1);
+            end
+        end
+        function result = calcArea(obj)
+            result = (obj.sizeD + obj.sizeU + 1) * (obj.sizeL + obj.sizeR + 1);
+        end
+        function obj = grow(obj, dir)
+            if dir == "up"
+                obj.sizeU = obj.sizeU + 1;
+            elseif dir == "right"
+                obj.sizeR = obj.sizeR + 1;
+            elseif dir == "down"
+                obj.sizeD = obj.sizeD + 1;
+            else
+                obj.sizeL = obj.sizeL + 1;
+            end
+        end
+        function obj = shrink(obj, dir)
+            if dir == "up"
+                obj.sizeU = obj.sizeU - 1;
+            elseif dir == "right"
+                obj.sizeR = obj.sizeR - 1;
+            elseif dir == "down"
+                obj.sizeD = obj.sizeD - 1;
+            else
+                obj.sizeL = obj.sizeL - 1;
+            end
+        end
+        function obj = move(obj, dir)
+            if dir == "up"
+                obj.centroidY = obj.centroidY - 1;
+            elseif dir == "right"
+                obj.centroidX = obj.centroidX + 1;
+            elseif dir == "down"
+                obj.centroidY = obj.centroidY + 1;
+            else
+                obj.centroidX = obj.centroidX - 1;
+            end
+        end
+        function obj = center(obj)            
+            obj.centroidX = floor(((obj.centroidX - obj.sizeL) + (obj.centroidX + obj.sizeR))/2);
+            obj.centroidY = floor(((obj.centroidY - obj.sizeU) + (obj.centroidY + obj.sizeD))/2);
+
+            wid = obj.sizeL + obj.sizeR;
+            hei = obj.sizeU + obj.sizeD;
+
+            obj.sizeL = floor(wid/2);
+            obj.sizeR = ceil(wid/2);
+
+            obj.sizeU = floor(hei/2);
+            obj.sizeD = ceil(hei/2);
+        end
+        function direction = dirRelation(obj, dept)
+            if obj.centroidX == dept.centroidX
+                if obj.centroidY > dept.centroidY
+                    direction = "up";
+                else
+                    direction = "down";
+                end
+            elseif obj.centroidY == dept.centroidY
+                if obj.centroidX > dept.centroidX
+                    direction = "left";
+                else
+                    direction = "right";
+                end
+            elseif obj.centroidX > dept.centroidX
+                if abs(obj.centroidX - dept.centroidX) < (obj.sizeL + dept.sizeR + 1)
+                    if obj.centroidY > dept.centroidY
+                        direction = "up";
+                    else
+                        direction = "down";
+                    end
+                else
+                    direction = "left";
+                end
+            elseif obj.centroidX < dept.centroidX
+                if abs(obj.centroidX - dept.centroidX) < (obj.sizeR + dept.sizeL + 1)
+                    if obj.centroidY > dept.centroidY
+                        direction = "up";
+                    else
+                        direction = "down";
+                    end
+                else
+                    direction = "right";
+                end
+            elseif obj.centroidY > dept.centroidY
+                if abs(obj.centroidY - dept.centroidY) < (obj.sizeU + dept.sizeD + 1)
+                    if obj.centroidX > dept.centroidX
+                        direction = "left";
+                    else
+                        direction = "right";
+                    end
+                else
+                    direction = "up";
+                end
+            elseif obj.centroidY < dept.centroidY
+                if abs(obj.centroidY - dept.centroidY) < (obj.sizeD + dept.sizeU + 1)
+                    if obj.centroidX > dept.centroidX
+                        direction = "left";
+                    else
+                        direction = "right";
+                    end
+                else
+                    direction = "down";
+                end
+            end
+        end
+    end
 end
