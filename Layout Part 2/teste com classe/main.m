@@ -136,7 +136,7 @@ function [ result ] = main(departments, constraints, materials, costs)
 
 
         [ resultTemp, constraintValue, areaValue, aspectValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
-        if resultTemp <= resultsArray(length(resultsArray))
+        if resultTemp <= resultsArray(length(resultsArray)) || ~isempty(option)
             resultsArray = [ resultsArray resultTemp ];
             constraintsArray = [ constraintsArray constraintValue ];
             areasArray = [ areasArray areaValue ];
@@ -144,6 +144,7 @@ function [ result ] = main(departments, constraints, materials, costs)
             it = it + 1;
         
         else
+            %
             if rand() < (0.1) %&& resultsArray(length(resultsArray)) > 1000
                 resultsArray = [ resultsArray resultTemp ];
                 constraintsArray = [ constraintsArray constraintValue ];
@@ -151,7 +152,7 @@ function [ result ] = main(departments, constraints, materials, costs)
                 aspectsArray = [ aspectsArray aspectValue ];
                 it = it + 1;
             else
-            
+            %            
                 departments = backup.departments;
                 constraints = backup.constraints;
 
