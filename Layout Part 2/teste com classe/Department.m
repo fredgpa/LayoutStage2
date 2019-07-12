@@ -15,21 +15,21 @@ classdef Department
     end
     methods
         function obj = updateDir(obj)
-            if (obj.sizeL + obj.sizeR) < (obj.sizeU + obj.sizeD)
+            if max(1, (obj.sizeL + obj.sizeR)) < max(1, (obj.sizeU + obj.sizeD))
                 obj.directions = ["up" "down" "right" "left"];
             else
                 obj.directions = ["left" "right" "up" "down"];
             end
         end
         function result = calcAspect(obj)
-            if (obj.sizeL + obj.sizeR) > (obj.sizeU + obj.sizeD)
-                result = (obj.sizeL + obj.sizeR)/(obj.sizeU + obj.sizeD);
+            if max(1, (obj.sizeL + obj.sizeR)) > max(1, (obj.sizeU + obj.sizeD))
+                result = max(1, (obj.sizeL + obj.sizeR))/max(1, (obj.sizeU + obj.sizeD));
             else
-                result = (obj.sizeU + obj.sizeD)/(obj.sizeL + obj.sizeR);
+                result = max(1, (obj.sizeU + obj.sizeD))/max(1, (obj.sizeL + obj.sizeR));
             end
         end
         function result = calcArea(obj)
-            result = (obj.sizeD + obj.sizeU) * (obj.sizeL + obj.sizeR);
+            result = max(1, (obj.sizeU + obj.sizeD)) * max(1, (obj.sizeL + obj.sizeR));
         end
         function obj = grow(obj, dir)
             if dir == "up"
@@ -43,13 +43,13 @@ classdef Department
             end
         end
         function obj = shrink(obj, dir)
-            if dir == "up"
+            if dir == "up" && obj.sizeU > 0
                 obj.sizeU = obj.sizeU - 1;
-            elseif dir == "right"
+            elseif dir == "right" && obj.sizeR > 0
                 obj.sizeR = obj.sizeR - 1;
-            elseif dir == "down"
+            elseif dir == "down" && obj.sizeD > 0
                 obj.sizeD = obj.sizeD - 1;
-            else
+            elseif obj.sizeL > 0
                 obj.sizeL = obj.sizeL - 1;
             end
         end

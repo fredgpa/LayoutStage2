@@ -8,6 +8,8 @@ classdef Constraint
     end
     methods
         function obj = constraintCheck(obj, deptA, deptB)
+            deptA = deptA.center;
+            deptB = deptB.center;
             distX_Y = sqrt((deptA.centroidX - deptB.centroidX)^2 + (deptA.centroidY - deptB.centroidY)^2);
             diagonalA = sqrt((deptA.sizeR)^2 + (deptA.sizeD)^2);
             diagonalB = sqrt((deptB.sizeR)^2 + (deptB.sizeD)^2);
@@ -23,18 +25,41 @@ classdef Constraint
             else
                 biggest_side_B = deptB.sizeD;
             end
-
-            if distX_Y <= (diagonalA + diagonalB)
+            
+            if (deptA.centroidY > deptB.centroidY) && (deptB.sizeD + deptA.sizeU + 1) == abs(deptA.centroidY - deptB.centroidY) && (deptA.centroidX - deptA.sizeL <= deptB.centroidX + deptB.sizeR) && (deptA.centroidX + deptA.sizeR >= deptB.centroidX - deptB.sizeL)
+                %up
                 obj.achAdj = true;
-                if (distX_Y == ((deptA.sizeR + deptA.sizeL)/2) + ((deptB.sizeR + deptB.sizeL)/2)) && (deptA.sizeU + deptA.sizeD == deptB.sizeU + deptB.sizeD)
-                    obj.achAlign = true;
-                elseif (distX_Y == ((deptA.sizeD + deptA.sizeU)/2) + ((deptB.sizeD + deptB.sizeU)/2)) && (deptA.sizeL + deptA.sizeR == deptB.sizeL + deptB.sizeR)
+                if deptA.centroidX + deptA.sizeR == deptB.centroidX + deptB.sizeR && deptA.centroidX - deptA.sizeL == deptB.centroidX - deptB.sizeL
                     obj.achAlign = true;
                 else
                     obj.achAlign = false;
                 end
-            else
-                obj.achAdj = false;
+            elseif (deptA.centroidX < deptB.centroidX) && (deptB.sizeL + deptA.sizeR + 1) == abs(deptA.centroidX - deptB.centroidX) && (deptA.centroidY - deptA.sizeU <= deptB.centroidY + deptB.sizeD) && (deptA.centroidY + deptA.sizeD >= deptB.centroidY - deptB.sizeU)
+                %right
+                obj.achAdj = true;
+                if deptA.centroidY + deptA.sizeD == deptB.centroidY + deptB.sizeD && deptA.centroidY - deptA.sizeU == deptB.centroidY - deptB.sizeU
+                    obj.achAlign = true;
+                else
+                    obj.achAlign = false;
+                end
+            elseif (deptA.centroidY < deptB.centroidY) && (deptB.sizeU + deptA.sizeD + 1) == abs(deptA.centroidY - deptB.centroidY) && (deptA.centroidX - deptA.sizeL <= deptB.centroidX + deptB.sizeR) && (deptA.centroidX + deptA.sizeR >= deptB.centroidX - deptB.sizeL)
+                %down
+                obj.achAdj = true;
+                if deptA.centroidX + deptA.sizeR == deptB.centroidX + deptB.sizeR && deptA.centroidX - deptA.sizeL == deptB.centroidX - deptB.sizeL
+                    obj.achAlign = true;
+                else
+                    obj.achAlign = false;
+                end
+            elseif (deptA.centroidX > deptB.centroidX) && (deptB.sizeR + deptA.sizeL + 1) == abs(deptA.centroidX - deptB.centroidX) && (deptA.centroidY - deptA.sizeU <= deptB.centroidY + deptB.sizeD) && (deptA.centroidY + deptA.sizeD >= deptB.centroidY - deptB.sizeU)
+                %left
+                obj.achAdj = true;
+                if deptA.centroidY + deptA.sizeD == deptB.centroidY + deptB.sizeD && deptA.centroidY - deptA.sizeU == deptB.centroidY - deptB.sizeU
+                    obj.achAlign = true;
+                else
+                    obj.achAlign = false;
+                end
+            elseif distX_Y == (diagonalA + diagonalB + 1)
+                obj.achAdj = true;
                 obj.achAlign = false;
             end
         end

@@ -2,7 +2,7 @@ function [ result ] = main(departments, constraints, materials, costs)
     weight_factor = [ 0.00000001 10 10 20 400];
     %%[departments, constraints] = initialize(problem);
 
-    [ resultsArray, constraintsArray, areasArray, aspectsArray ]= calcObj(departments, constraints, weight_factor, materials, costs);
+    [ resultsArray, constraintsArray, areasArray, aspectsArray, departments, constraints ]= calcObj(departments, constraints, weight_factor, materials, costs);
     dirArray = [];
     deptArray = [];
     it = 1;
@@ -35,6 +35,7 @@ function [ result ] = main(departments, constraints, materials, costs)
             [ departments, mod ] = attract(dept_number, departments, constraints);
         end
         
+        %{
         for i = 1:length(constraints)
             if constraints(i).checkDept(departments(dept_number).n)
                 if constraints(i).reqAlign && constraints(i).achAdj && ~constraints(i).achAlign
@@ -43,22 +44,23 @@ function [ result ] = main(departments, constraints, materials, costs)
                 end
             end
         end
-
+        %}
 
         if isempty(option)
             prob = dirProb(departments, dept_number, mod, bool);
-
+            %{
             if departments(dept_number).calcArea == 1
                 dir = "right";
-            else            
+            else
+            %}
                 dir = roulette(prob);
                 dir = departments(dept_number).directions(dir);
-            end
+            %end
         else
             if constraints(option).deptA == departments(dept_number).n
-                deptPos = findDepartment(departments, constraint(option).deptB);
+                deptPos = findDepartment(departments, constraints(option).deptB);
             else
-                deptPos = findDepartment(departments, constraint(option).deptA);
+                deptPos = findDepartment(departments, constraints(option).deptA);
             end
 
             if departments(dept_number).dirRelation(departments(deptPos)) == "right" || departments(dept_number).dirRelation(departments(deptPos)) == "left"
@@ -98,12 +100,13 @@ function [ result ] = main(departments, constraints, materials, costs)
         if bool
             departments = adjustPos(departments, dept_number, dir);
             if checkSpace(departments, dept_number, dir)
+                %
                 for i=1:length(constraints)
                     if constraints(i).checkDept(departments(dept_number).n) && constraints(i).reqAlign && constraints(i).achAlign
                         if constraints(i).deptA == departments(dept_number).n                            
-                            deptPos = findDepartment(departments, deptB);
+                            deptPos = findDepartment(departments, constraints(i).deptB);
                         else
-                            deptPos = findDepartment(departments, deptA);
+                            deptPos = findDepartment(departments, constraints(i).deptA);
                         end
                         if ((dir == "left" || dir == "right") && (departments(dept_number).centroidX == departments(deptPos).centroidX)) || ((dir == "up" || dir == "down") && (departments(dept_number).centroidY == departments(deptPos).centroidY))
                             departments = adjustPos(departments, deptPos, dir);
@@ -114,16 +117,18 @@ function [ result ] = main(departments, constraints, materials, costs)
                         end
                     end
                 end
+                %
                 departments(dept_number) = departments(dept_number).grow(dir);
                 departments(dept_number) = departments(dept_number).center();
             end
         else
+            %
             for i=1:length(constraints)
                 if constraints(i).checkDept(departments(dept_number).n) && constraints(i).reqAlign && constraints(i).achAlign
                     if constraints(i).deptA == departments(dept_number).n                            
-                        deptPos = findDepartment(departments, deptB);
+                        deptPos = findDepartment(departments, constraints(i).deptB);
                     else
-                        deptPos = findDepartment(departments, deptA);
+                        deptPos = findDepartment(departments, constraints(i).deptA);
                     end
                     if ((dir == "left" || dir == "right") && (departments(dept_number).centroidX == departments(deptPos).centroidX)) || ((dir == "up" || dir == "down") && (departments(dept_number).centroidY == departments(deptPos).centroidY))
                             departments(deptPos) = departments(deptPos).shrink(dir);
@@ -131,12 +136,13 @@ function [ result ] = main(departments, constraints, materials, costs)
                     end
                 end
             end
+            %
             departments(dept_number) = departments(dept_number).shrink(dir);
             departments(dept_number) = departments(dept_number).center();
         end
 
 
-        [ resultTemp, constraintValue, areaValue, aspectValue ] = calcObj(departments, constraints, weight_factor, materials, costs);
+        [ resultTemp, constraintValue, areaValue, aspectValue, departments, constraints ] = calcObj(departments, constraints, weight_factor, materials, costs);
         if resultTemp <= resultsArray(length(resultsArray)) || ~isempty(option)
             resultsArray = [ resultsArray resultTemp ];
             constraintsArray = [ constraintsArray constraintValue ];
@@ -167,5 +173,9 @@ function [ result ] = main(departments, constraints, materials, costs)
         end
 
     end
-    result = [ resultsArray deptArray dirArray ];
+    result.resultsArray = resultsArray;
+    result.deptArray = deptArray;
+    result.dirArray = dirArray;
+    result.departments = departments;
+    result.constraints = constraints;
 end

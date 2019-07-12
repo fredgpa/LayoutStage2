@@ -1,4 +1,4 @@
-function [value, constraintValue, areaValue, aspectValue] = calcObj(departments, constraints, weight_factor, materials, costs)
+function [value, constraintValue, areaValue, aspectValue, departments, constraints] = calcObj(departments, constraints, weight_factor, materials, costs)
 
     for i = 1:length(constraints)
         deptA = findDepartment(departments, constraints(i).deptA);
