@@ -7,6 +7,7 @@ function [ result ] = main(departments, constraints, materials, costs)
     deptArray = [];
     it = 1;
     finish = false;
+
     while(~finish)
         option = [];
         mod = [0 0];
@@ -164,7 +165,6 @@ function [ result ] = main(departments, constraints, materials, costs)
                 end
             end
         end
-        
 
     end
     result = [ resultsArray deptArray dirArray ];

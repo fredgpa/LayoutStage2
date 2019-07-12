@@ -15,7 +15,7 @@ classdef Department
     end
     methods
         function obj = updateDir(obj)
-            if (obj.sizeL + obj.sizeR + 1) < (obj.sizeU + obj.sizeD + 1)
+            if (obj.sizeL + obj.sizeR) < (obj.sizeU + obj.sizeD)
                 obj.directions = ["up" "down" "right" "left"];
             else
                 obj.directions = ["left" "right" "up" "down"];
@@ -23,13 +23,13 @@ classdef Department
         end
         function result = calcAspect(obj)
             if (obj.sizeL + obj.sizeR) > (obj.sizeU + obj.sizeD)
-                result = (obj.sizeL + obj.sizeR + 1)/(obj.sizeU + obj.sizeD + 1);
+                result = (obj.sizeL + obj.sizeR)/(obj.sizeU + obj.sizeD);
             else
-                result = (obj.sizeU + obj.sizeD + 1)/(obj.sizeL + obj.sizeR + 1);
+                result = (obj.sizeU + obj.sizeD)/(obj.sizeL + obj.sizeR);
             end
         end
         function result = calcArea(obj)
-            result = (obj.sizeD + obj.sizeU + 1) * (obj.sizeL + obj.sizeR + 1);
+            result = (obj.sizeD + obj.sizeU) * (obj.sizeL + obj.sizeR);
         end
         function obj = grow(obj, dir)
             if dir == "up"
@@ -65,17 +65,17 @@ classdef Department
             end
         end
         function obj = center(obj)            
-            obj.centroidX = floor(((obj.centroidX - obj.sizeL) + (obj.centroidX + obj.sizeR))/2);
-            obj.centroidY = floor(((obj.centroidY - obj.sizeU) + (obj.centroidY + obj.sizeD))/2);
+            obj.centroidX = ((obj.centroidX - obj.sizeL) + (obj.centroidX + obj.sizeR))/2;
+            obj.centroidY = ((obj.centroidY - obj.sizeU) + (obj.centroidY + obj.sizeD))/2;
 
             wid = obj.sizeL + obj.sizeR;
             hei = obj.sizeU + obj.sizeD;
 
-            obj.sizeL = floor(wid/2);
-            obj.sizeR = ceil(wid/2);
+            obj.sizeL = wid/2;
+            obj.sizeR = wid/2;
 
-            obj.sizeU = floor(hei/2);
-            obj.sizeD = ceil(hei/2);
+            obj.sizeU = hei/2;
+            obj.sizeD = hei/2;
         end
         function direction = dirRelation(obj, dept)
             if obj.centroidX == dept.centroidX
@@ -91,7 +91,7 @@ classdef Department
                     direction = "right";
                 end
             elseif obj.centroidX > dept.centroidX
-                if abs(obj.centroidX - dept.centroidX) < (obj.sizeL + dept.sizeR + 1)
+                if abs(obj.centroidX - dept.centroidX) < (obj.sizeL + dept.sizeR)
                     if obj.centroidY > dept.centroidY
                         direction = "up";
                     else
@@ -101,7 +101,7 @@ classdef Department
                     direction = "left";
                 end
             elseif obj.centroidX < dept.centroidX
-                if abs(obj.centroidX - dept.centroidX) < (obj.sizeR + dept.sizeL + 1)
+                if abs(obj.centroidX - dept.centroidX) < (obj.sizeR + dept.sizeL)
                     if obj.centroidY > dept.centroidY
                         direction = "up";
                     else
@@ -111,7 +111,7 @@ classdef Department
                     direction = "right";
                 end
             elseif obj.centroidY > dept.centroidY
-                if abs(obj.centroidY - dept.centroidY) < (obj.sizeU + dept.sizeD + 1)
+                if abs(obj.centroidY - dept.centroidY) < (obj.sizeU + dept.sizeD)
                     if obj.centroidX > dept.centroidX
                         direction = "left";
                     else
@@ -121,7 +121,7 @@ classdef Department
                     direction = "up";
                 end
             elseif obj.centroidY < dept.centroidY
-                if abs(obj.centroidY - dept.centroidY) < (obj.sizeD + dept.sizeU + 1)
+                if abs(obj.centroidY - dept.centroidY) < (obj.sizeD + dept.sizeU)
                     if obj.centroidX > dept.centroidX
                         direction = "left";
                     else

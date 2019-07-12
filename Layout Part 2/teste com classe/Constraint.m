@@ -9,8 +9,8 @@ classdef Constraint
     methods
         function obj = constraintCheck(obj, deptA, deptB)
             distX_Y = sqrt((deptA.centroidX - deptB.centroidX)^2 + (deptA.centroidY - deptB.centroidY)^2);
-            diagonalA = sqrt((deptA.sizeR + 0.5)^2 + (deptA.sizeD + 0.5)^2);
-            diagonalB = sqrt((deptB.sizeR + 0.5)^2 + (deptB.sizeD + 0.5)^2);
+            diagonalA = sqrt((deptA.sizeR)^2 + (deptA.sizeD)^2);
+            diagonalB = sqrt((deptB.sizeR)^2 + (deptB.sizeD)^2);
             
             if deptA.sizeR >= deptA.sizeD
                 biggest_side_A = deptA.sizeR;
@@ -26,9 +26,9 @@ classdef Constraint
 
             if distX_Y <= (diagonalA + diagonalB)
                 obj.achAdj = true;
-                if (distX_Y == ((deptA.sizeR + deptA.sizeL)/2) + ((deptB.sizeR + deptB.sizeL)/2) + 1) && (deptA.sizeU + deptA.sizeD == deptB.sizeU + deptB.sizeD)
+                if (distX_Y == ((deptA.sizeR + deptA.sizeL)/2) + ((deptB.sizeR + deptB.sizeL)/2)) && (deptA.sizeU + deptA.sizeD == deptB.sizeU + deptB.sizeD)
                     obj.achAlign = true;
-                elseif (distX_Y == ((deptA.sizeD + deptA.sizeU)/2) + ((deptB.sizeD + deptB.sizeU)/2) + 1) && (deptA.sizeL + deptA.sizeR == deptB.sizeL + deptB.sizeR)
+                elseif (distX_Y == ((deptA.sizeD + deptA.sizeU)/2) + ((deptB.sizeD + deptB.sizeU)/2)) && (deptA.sizeL + deptA.sizeR == deptB.sizeL + deptB.sizeR)
                     obj.achAlign = true;
                 else
                     obj.achAlign = false;
