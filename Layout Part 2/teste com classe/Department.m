@@ -15,21 +15,21 @@ classdef Department
     end
     methods
         function obj = updateDir(obj)
-            if max(1, (obj.sizeL + obj.sizeR)) < max(1, (obj.sizeU + obj.sizeD))
+            if (obj.sizeL + obj.sizeR) < (obj.sizeU + obj.sizeD)
                 obj.directions = ["up" "down" "right" "left"];
             else
                 obj.directions = ["left" "right" "up" "down"];
             end
         end
         function result = calcAspect(obj)
-            if max(1, (obj.sizeL + obj.sizeR)) > max(1, (obj.sizeU + obj.sizeD))
-                result = max(1, (obj.sizeL + obj.sizeR))/max(1, (obj.sizeU + obj.sizeD));
+            if (obj.sizeL + obj.sizeR) > (obj.sizeU + obj.sizeD)
+                result = (obj.sizeL + obj.sizeR)/(obj.sizeU + obj.sizeD);
             else
-                result = max(1, (obj.sizeU + obj.sizeD))/max(1, (obj.sizeL + obj.sizeR));
+                result = (obj.sizeU + obj.sizeD)/(obj.sizeL + obj.sizeR);
             end
         end
         function result = calcArea(obj)
-            result = max(1, (obj.sizeU + obj.sizeD)) * max(1, (obj.sizeL + obj.sizeR));
+            result = (obj.sizeU + obj.sizeD) * (obj.sizeL + obj.sizeR);
         end
         function obj = grow(obj, dir)
             if dir == "up"

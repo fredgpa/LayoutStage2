@@ -34,64 +34,16 @@ function [ result ] = main(departments, constraints, materials, costs)
         if ~isempty(constraints) && bool            
             [ departments, mod ] = attract(dept_number, departments, constraints);
         end
-        
-        %{
-        for i = 1:length(constraints)
-            if constraints(i).checkDept(departments(dept_number).n)
-                if constraints(i).reqAlign && constraints(i).achAdj && ~constraints(i).achAlign
-                    option = i;
-                    break;
-                end
-            end
-        end
-        %}
+       
 
-        if isempty(option)
-            prob = dirProb(departments, dept_number, mod, bool);
-            %{
-            if departments(dept_number).calcArea == 1
-                dir = "right";
-            else
-            %}
-                dir = roulette(prob);
-                dir = departments(dept_number).directions(dir);
-            %end
+        prob = dirProb(departments, dept_number, mod, bool);
+        %
+        if departments(dept_number).calcArea == 1
+            dir = "right";
         else
-            if constraints(option).deptA == departments(dept_number).n
-                deptPos = findDepartment(departments, constraints(option).deptB);
-            else
-                deptPos = findDepartment(departments, constraints(option).deptA);
-            end
-
-            if departments(dept_number).dirRelation(departments(deptPos)) == "right" || departments(dept_number).dirRelation(departments(deptPos)) == "left"
-                if (departments(dept_number).centroidY - departments(dept_number).sizeU) < (departments(deptPos).centroidY - departments(deptPos).sizeU)
-                    dir = "up";
-                    bool = false;
-                elseif (departments(dept_number).centroidY - departments(dept_number).sizeU) > (departments(deptPos).centroidY - departments(deptPos).sizeU)
-                    dir = "up";
-                    bool = true;
-                elseif (departments(dept_number).centroidY + departments(dept_number).sizeD) < (departments(deptPos).centroidY - departments(deptPos).sizeD)
-                    dir = "down";
-                    bool = true;
-                else
-                    dir = "up";
-                    bool = false;
-                end
-            else
-                if (departments(dept_number).centroidX - departments(dept_number).sizeL) < (departments(deptPos).centroidX - departments(deptPos).sizeL)
-                    dir = "left";
-                    bool = false;
-                elseif (departments(dept_number).centroidX - departments(dept_number).sizeL) > (departments(deptPos).centroidX - departments(deptPos).sizeL)
-                    dir = "left";
-                    bool = true;
-                elseif (departments(dept_number).centroidX + departments(dept_number).sizeR) < (departments(deptPos).centroidX - departments(deptPos).sizeR)
-                    dir = "right";
-                    bool = true;
-                else
-                    dir = "right";
-                    bool = false;
-                end
-            end
+        %
+            dir = roulette(prob);
+            dir = departments(dept_number).directions(dir);
         end
             
         deptArray = [deptArray departments(dept_number).n];
@@ -152,7 +104,7 @@ function [ result ] = main(departments, constraints, materials, costs)
         
         else
             %
-            if rand() < (0.1) %&& resultsArray(length(resultsArray)) > 1000
+            if rand() < (0.1 - it/2000) %&& resultsArray(length(resultsArray)) > 1000
                 resultsArray = [ resultsArray resultTemp ];
                 constraintsArray = [ constraintsArray constraintValue ];
                 areasArray = [ areasArray areaValue ];
@@ -162,12 +114,16 @@ function [ result ] = main(departments, constraints, materials, costs)
             %            
                 departments = backup.departments;
                 constraints = backup.constraints;
-
+                
+                if resultsArray(length(resultsArray)) < 100
                 finish = true;
-                for i=1:length(constraints)
-                    if (constraints(i).reqAlign && ~(constraints(i).achAlign)) || ~(constraints(i).achAdj)
-                        finish = false;
+                %{
+                    for i=1:length(constraints)
+                        if (constraints(i).reqAlign && ~(constraints(i).achAlign)) || ~(constraints(i).achAdj)
+                            finish = false;
+                        end
                     end
+                %}
                 end
             end
         end
