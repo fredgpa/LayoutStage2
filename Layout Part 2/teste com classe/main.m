@@ -1,8 +1,8 @@
 function [ result ] = main(departments, constraints, materials, costs)
-    weight_factor = [ 0.00000001 10 10 20 400];
+    weight_factor = [ 0.00000001 50 10 20 400];
     %%[departments, constraints] = initialize(problem);
 
-    [ resultsArray, constraintsArray, areasArray, aspectsArray, departments, constraints ]= calcObj(departments, constraints, weight_factor, materials, costs);
+    [ resultsArray, flowArray, departments, constraints ]= calcObj(departments, constraints, weight_factor, materials, costs);
     dirArray = [];
     deptArray = [];
     it = 1;
@@ -94,21 +94,17 @@ function [ result ] = main(departments, constraints, materials, costs)
         end
 
 
-        [ resultTemp, constraintValue, areaValue, aspectValue, departments, constraints ] = calcObj(departments, constraints, weight_factor, materials, costs);
-        if resultTemp <= resultsArray(length(resultsArray)) || ~isempty(option)
+        [ resultTemp, flowTemp, departments, constraints ] = calcObj(departments, constraints, weight_factor, materials, costs);
+        if resultTemp <= resultsArray(length(resultsArray)) %&& flowTemp <= flowArray(length(flowArray))
             resultsArray = [ resultsArray resultTemp ];
-            constraintsArray = [ constraintsArray constraintValue ];
-            areasArray = [ areasArray areaValue ];
-            aspectsArray = [ aspectsArray aspectValue ];
+            flowArray = [ flowArray flowTemp ];
             it = it + 1;
         
         else
             %
-            if rand() < (0.1 - it/2000) %&& resultsArray(length(resultsArray)) > 1000
+            if rand() < (0.1 - it/3000) %&& resultsArray(length(resultsArray)) > 1000
                 resultsArray = [ resultsArray resultTemp ];
-                constraintsArray = [ constraintsArray constraintValue ];
-                areasArray = [ areasArray areaValue ];
-                aspectsArray = [ aspectsArray aspectValue ];
+                flowArray = [ flowArray flowTemp ];
                 it = it + 1;
             else
             %            
