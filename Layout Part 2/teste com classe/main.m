@@ -9,7 +9,6 @@ function [ result ] = main(departments, constraints, materials, costs)
     finish = false;
 
     while(~finish)
-        option = [];
         mod = [0 0];
         resultsArray(length(resultsArray))
         backup.departments = departments;
@@ -111,8 +110,8 @@ function [ result ] = main(departments, constraints, materials, costs)
                 departments = backup.departments;
                 constraints = backup.constraints;
                 
-                if resultsArray(length(resultsArray)) < 100
-                finish = true;
+                if resultsArray((length(resultsArray) - 10):length(resultsArray)) == resultsArray(length(resultsArray))
+                    finish = true;
                 %{
                     for i=1:length(constraints)
                         if (constraints(i).reqAlign && ~(constraints(i).achAlign)) || ~(constraints(i).achAdj)
@@ -130,4 +129,48 @@ function [ result ] = main(departments, constraints, materials, costs)
     result.dirArray = dirArray;
     result.departments = departments;
     result.constraints = constraints;
+
+    finish = false;
+    while(~finish)
+        for i = 1:length(departments)
+            for j = 1:4
+                departments = adjustPos(departments, i, departments(i).directions(j));
+                if checkSpace(departments, i, departments(i).directions(j))
+                    for k=1:length(constraints)
+                        if constraints(k).checkDept(departments(i).n) && constraints(k).achAdj
+                            if constraints(k).deptA == departments(i).n
+                                deptPos = findDepartment(departments, constraints(k).deptB);
+                            else
+                                deptPos = findDepartment(departments, constraints(k).deptA);
+                            end
+                            if ((departments(i).directions(j) == "left" || departments(i).directions(j) == "right") && (departments(dept_number).centroidY == departments(deptPos).centroidY)) || ((dir == "up" || dir == "down") && (departments(dept_number).centroidX == departments(deptPos).centroidX))
+                                departments = adjustPos(departments, deptPos, departments(i).directions(j));
+                                if checkSpace(departments, deptPos, departments(i).directions(j))
+                                    departments(deptPos) = departments(deptPos).move(departments(i).directions(j));
+                                    departments(deptPos) = departments(deptPos).center();
+                                                                      
+                                end
+                            end
+                        end
+                    end
+                    departments(dept_number) = departments(dept_number).move(departments(i).directions(j));
+                    departments(dept_number) = departments(dept_number).center();                      
+                end
+
+
+                [ resultTemp, flowTemp, departments, constraints ] = calcObj(departments, constraints, weight_factor, materials, costs);
+                if resultTemp <= resultsArray(length(resultsArray)) %&& flowTemp <= flowArray(length(flowArray))
+                    resultsArray = [ resultsArray resultTemp ];
+                    flowArray = [ flowArray flowTemp ];
+                    it = it + 1;                    
+                else                                
+                    departments = backup.departments;
+                    constraints = backup.constraints;                    
+                end
+            end
+        end
+        if resultsArray((length(resultsArray) - 10):length(resultsArray)) == resultsArray(length(resultsArray))
+            finish = true;
+        end
+    end
 end
