@@ -1,5 +1,5 @@
 function [ result ] = main(departments, constraints, materials, costs)
-    weight_factor = [ 0.01 10 10 20 400];
+    weight_factor = [ 0.00000001 10 10 20 400];
     %%[departments, constraints] = initialize(problem);
 
     [ resultsArray, flowArray, departments, constraints ]= calcObj(departments, constraints, weight_factor, materials, costs);
@@ -105,13 +105,13 @@ function [ result ] = main(departments, constraints, materials, costs)
             it = it + 1;        
         else
             %
-            aux = it/6000;
+            aux = it/2000;
             %{
             if aux > 0.095
                 aux = 0.095;
             end
             %}
-            if rand() < (0.1 - aux) && abs(resultsArray(length(resultsArray)) - resultTemp) < (0.1*resultsArray(length(resultsArray)))
+            if rand() < (0.1 - aux) %&& abs(resultsArray(length(resultsArray)) - resultTemp) < (0.1*resultsArray(length(resultsArray)))
                 resultsArray = [ resultsArray resultTemp ];
                 flowArray = [ flowArray flowTemp ];
                 it = it + 1;
@@ -120,7 +120,7 @@ function [ result ] = main(departments, constraints, materials, costs)
                 constraints = backup.constraints;
                 %
                 if length(resultsArray) > 20
-                    if resultsArray((length(resultsArray) - floor(0.2*it)):length(resultsArray)) == resultsArray(length(resultsArray))
+                    if resultsArray((length(resultsArray) - 10):length(resultsArray)) == resultsArray(length(resultsArray))
                         finish = true;
                     %{
                         for i=1:length(constraints)
