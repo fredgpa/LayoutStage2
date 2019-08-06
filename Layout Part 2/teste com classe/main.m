@@ -19,6 +19,9 @@ function [ result ] = main(departments, constraints, materials, costs)
 
         prob = deptProb_Area(departments);
 
+        if sum(prob) == 0
+            break;
+        end
         dept_number = roulette(prob);
         while departments(dept_number).fixedSize == true
             dept_number = roulette(prob);
