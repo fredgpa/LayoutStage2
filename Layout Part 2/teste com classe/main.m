@@ -1,7 +1,9 @@
 function [ result ] = main(departments, constraints, materials, costs)
     weight_factor = [ 0.01 10 10 20 400];
     %%[departments, constraints] = initialize(problem);
-
+    for i = 1:length(departments)
+        departments(i) = departments(i).updateFlowPoint();
+    end
     [ resultsArray, flowArray, departments, constraints ]= calcObj(departments, constraints, weight_factor, materials, costs);
     dirArray = [];
     deptArray = [];
@@ -10,7 +12,7 @@ function [ result ] = main(departments, constraints, materials, costs)
     %it = 638;
     it = 1;
     finish = false;
-
+    
     while(~finish)
         mod = [0 0];
         resultsArray(length(resultsArray))
@@ -94,6 +96,7 @@ function [ result ] = main(departments, constraints, materials, costs)
             departments(dept_number) = departments(dept_number).center();
         end
 
+        departments(dept_number) = departments(dept_number).updateFlowPoint();
         
         [ resultTemp, flowTemp, departments, constraints ] = calcObj(departments, constraints, weight_factor, materials, costs);
         

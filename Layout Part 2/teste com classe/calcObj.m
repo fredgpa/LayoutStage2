@@ -6,13 +6,15 @@ function [value, value1, departments, constraints] = calcObj(departments, constr
         constraints(i) = constraints(i).constraintCheck( departments(deptA), departments(deptB));
     end
     
+    
+    
     value1 = 0;
     value2 = 0;
     value3 = 0;
     dist = zeros(length(departments));
     for i=1:length(departments)
       for j=1:length(departments)
-        dist(i, j) = abs((departments(i).centroidX - departments(j).centroidX)) + abs((departments(i).centroidY - departments(j).centroidY));
+        dist(i, j) = abs((departments(i).flowPoint(1) - departments(j).flowPoint(1))) + abs((departments(i).flowPoint(2) - departments(j).flowPoint(2)));
         value1 = value1 + (materials(departments(i).n, departments(j).n) * costs(departments(i).n, departments(j).n) * dist(i, j));
       end
       value2 = value2 + (abs(departments(i).reqArea - departments(i).calcArea()) / departments(i).reqArea);

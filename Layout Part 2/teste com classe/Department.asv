@@ -12,7 +12,7 @@ classdef Department
         fixedPos = [];
         fixedSize = [];
         directions = [];
-        flowPoint = [];
+        adjacencyPoint = [];
         flowDirections = [];
     end
     methods
@@ -134,20 +134,20 @@ classdef Department
                 end
             end
         end
-        function obj = updateFlowPoint(obj)
-            obj.flowPoint = [ obj.centroidX obj.centroidY ];
+        function obj = updateAdjacencyPoint(obj)
+            obj.adjacencyPoint = [ obj.centroidX obj.centroidY ];
             if ~isempty(obj.flowDirections)
                 if ismember("up", obj.flowDirections)
-                    obj.flowPoint(2) = obj.flowPoint(2) - obj.sizeU;
+                    obj.adjacencyPoint(2) = obj.adjacencyPoint(2) - obj.sizeU;
                 end
                 if ismember("right", obj.flowDirections)
-                    obj.flowPoint(1) = obj.flowPoint(1) + obj.sizeR;
+                    obj.adjacencyPoint(1) = obj.adjacencyPoint(1) + obj.sizeR;
                 end
                 if ismember("down", obj.flowDirections)
-                    obj.flowPoint(2) = obj.flowPoint(2) + obj.sizeD;
+                    obj.adjacencyPoint(2) = obj.adjacencyPoint(2) + obj.sizeD;
                 end
-                if ismember("left", obj.flowDirections)
-                    obj.flowPoint(1) = obj.flowPoint(1) - obj.sizeU;
+                if ismember("up", obj.flowDirections)
+                    obj.adjacencyPoint(2) = obj.adjacencyPoint(2) + obj.sizeU;
                 end               
             end
         end
