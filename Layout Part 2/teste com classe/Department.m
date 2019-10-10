@@ -151,5 +151,9 @@ classdef Department
                 end               
             end
         end
+        function obj = setCentroid(obj, x, y)
+            obj.centroidX = x;
+            obj.centroidY = y;
+        end
     end
 end

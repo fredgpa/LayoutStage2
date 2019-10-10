@@ -1,9 +1,17 @@
-function [ result ] = main(departments, constraints, materials, costs)
-    weight_factor = [ 0.01 10 10 20 400];
+function [ result ] = main(departments, constraints, materials, costs, cromossome)
+    %exemplo de cromossomo para 5 pesos e 20 departamentos
+    %[5 10 15 11 14 17 20 3 4 5 8 7 9 6 1 2 11 10 13 12 16 15 14 18 17 19 20 1 5 4 3 7 7 8 9 6 3 8 7 9 6 4 2 4 1 5 2 5 6...]
+    % primeiro o numero de pesos, depois os pesos, depois o numero de depts, depois os depts e os centroids em seguida
+    weight_factor = cromossome(2:(cromossome(1)+1));
     %%[departments, constraints] = initialize(problem);
+
+    departments = updateDepartments(departments, cromossome);
+
+    %{
     for i = 1:length(departments)
         departments(i) = departments(i).updateFlowPoint();
     end
+    %}
     [ resultsArray, flowArray, departments, constraints ]= calcObj(departments, constraints, weight_factor, materials, costs);
     dirArray = [];
     deptArray = [];
@@ -13,12 +21,22 @@ function [ result ] = main(departments, constraints, materials, costs)
     it = 1;
     finish = false;
     
+
+    dept_number = cromossome(1) + 3;
     while(~finish)
+        
         mod = [0 0];
         resultsArray(length(resultsArray))
         backup.departments = departments;
         backup.constraints = constraints;
 
+
+
+        if dept_number <= 25 && (departments(dept_number).reqArea - departments(dept_number).calcArea() == 0)
+            dept_number = dept_number + 1;
+        end
+        
+        %{
         prob = deptProb_Area(departments);
 
         if sum(prob) == 0
@@ -28,6 +46,7 @@ function [ result ] = main(departments, constraints, materials, costs)
         while departments(dept_number).fixedSize == true
             dept_number = roulette(prob);
         end
+        %}
 
         if departments(dept_number).reqArea - departments(dept_number).calcArea() > 0
             bool = true;
@@ -52,6 +71,7 @@ function [ result ] = main(departments, constraints, materials, costs)
             dir = roulette(prob);
             dir = departments(dept_number).directions(dir);
         end
+        
             
         if bool
             departments = adjustPos(departments, constraints, dept_number, dir);
@@ -96,7 +116,7 @@ function [ result ] = main(departments, constraints, materials, costs)
             departments(dept_number) = departments(dept_number).center();
         end
 
-        departments(dept_number) = departments(dept_number).updateFlowPoint();
+        %departments(dept_number) = departments(dept_number).updateFlowPoint();
         
         [ resultTemp, flowTemp, departments, constraints ] = calcObj(departments, constraints, weight_factor, materials, costs);
         

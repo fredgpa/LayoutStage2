@@ -1,0 +1,40 @@
+Resumo Segundo Estágio
+
+O programa recebe os custos de transporte, o fluxo entre departamentos, a posição inicial do centroid
+e as dimensões iniciais dos departamentos. Com esses dados, é calculado o valor inicial da Função 
+Objetivo, que se torna o valor ótimo.
+
+No início do loop, o algoritmo calcula a probabilidade individual de escolha de cada um dos departamentos.
+É feita então uma roleta com todos os departamentos, onde apenas um será escolhido. É determinada então 
+que modificação será necessária: crescimento ou diminuição de sua área. Essa escolha é feita baseada na
+relação entre a área requerida pelo problema e a área alcançada até o momento pelo departamento. Se a área
+requerida for maior que a alcançada, é escolhido crescimento, caso contrário, diminuição.
+
+Nesse momento são calculadas as probabilidades de cada uma das direções possíveis (cima, baixo, esquerda,
+direita) e em seguida é feita outra roleta, agora com as 4 opções de direção, e uma é selecionada.
+
+Para iterações de diminuição, o departamento é então reduzido em 1 unidade na direção especificada, caso
+dimensão resultante seja, pelo menos, igual a 1. Caso contrário, nenhuma mudança é feita.
+
+Para iterações de crescimento, é necessário testar se possuem departamentos impedindo o crescimento. Se 
+houverem, inicia-se a função de Push. Essa função consiste em avaliar todos os departamentos
+inconvenientes, individualmente, tentando move-los 1 unidade na direção que foi escolhida anteriormente,
+de modo que afastem-se do departamento escolhido na iteração, permitindo seu crescimento. A função atua
+de modo recursivo: avalia todos os departamentos que precisam ser movidos e caso eles estejam sendo
+impedidos por outros departamentos, chama a função Push novamente até que consiga movimentar todos os 
+departamentos necessários ou encontre uma situação impossível. No segundo caso a função para e nenhuma
+mudança é feita. Entretanto, caso nenhum departamento esteja impedindo o crescimento do original, o
+algoritmo apenas testa se é possível que haja o aumento de 1 unidade sem que a dimensão do mesmo
+ultrapasse a barreira do terreno. Se não for possível, nenhuma mudança é feita.
+
+Com as alterações feitas, o algoritmo calcula o novo valor da Função Objetivo. Se o valor for menor, ou seja,
+melhor que o anterior, este se torna o novo valor ótimo. Caso contrário é feito um teste, com probabilidade
+muito pequena de sucesso, para decidir se o valor pior deve ser descartado. Caso o teste seja positivo, o
+novo valor se torna o valor ótimo. Entretanto, se for negativo, o valor é descartado.
+
+Se o valor de uma iteração for descartado e o algoritmo já tenha ultrapassado o número de 20 iterações, ocorre
+um teste. O algoritmo analisa as últimas iterações (20% do total) e se não houver nenhuma melhora de resultado
+dentre elas a execução é terminada, retornando como resposta o valor ótimo atual.
+
+No caso do algoritmo ainda não ter encontrado seu final, a execução retorna pro início do loop e começa outra
+iteração.
